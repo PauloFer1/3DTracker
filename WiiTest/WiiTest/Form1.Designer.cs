@@ -38,6 +38,9 @@
             this.labelZ = new System.Windows.Forms.Label();
             this.status1 = new System.Windows.Forms.Label();
             this.status2 = new System.Windows.Forms.Label();
+            this.saveBtn = new System.Windows.Forms.Button();
+            this.initBtn = new System.Windows.Forms.Button();
+            this.resetBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbIR)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbIR2)).BeginInit();
             this.SuspendLayout();
@@ -132,11 +135,44 @@
             this.status2.TabIndex = 9;
             this.status2.Text = "LOST";
             // 
+            // saveBtn
+            // 
+            this.saveBtn.Location = new System.Drawing.Point(669, 462);
+            this.saveBtn.Name = "saveBtn";
+            this.saveBtn.Size = new System.Drawing.Size(102, 34);
+            this.saveBtn.TabIndex = 10;
+            this.saveBtn.Text = "Save File";
+            this.saveBtn.UseVisualStyleBackColor = true;
+            this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
+            // 
+            // initBtn
+            // 
+            this.initBtn.Location = new System.Drawing.Point(32, 462);
+            this.initBtn.Name = "initBtn";
+            this.initBtn.Size = new System.Drawing.Size(137, 33);
+            this.initBtn.TabIndex = 11;
+            this.initBtn.Text = "Initialize Tracking";
+            this.initBtn.UseVisualStyleBackColor = true;
+            this.initBtn.Click += new System.EventHandler(this.initBtn_Click);
+            // 
+            // resetBtn
+            // 
+            this.resetBtn.Location = new System.Drawing.Point(515, 462);
+            this.resetBtn.Name = "resetBtn";
+            this.resetBtn.Size = new System.Drawing.Size(132, 34);
+            this.resetBtn.TabIndex = 12;
+            this.resetBtn.Text = "Reset Draw";
+            this.resetBtn.UseVisualStyleBackColor = true;
+            this.resetBtn.Click += new System.EventHandler(this.resetBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(791, 521);
+            this.Controls.Add(this.resetBtn);
+            this.Controls.Add(this.initBtn);
+            this.Controls.Add(this.saveBtn);
             this.Controls.Add(this.status2);
             this.Controls.Add(this.status1);
             this.Controls.Add(this.labelZ);
@@ -168,6 +204,9 @@
         public System.Windows.Forms.Label labelZ;
         private System.Windows.Forms.Label status1;
         private System.Windows.Forms.Label status2;
+        private System.Windows.Forms.Button saveBtn;
+        private System.Windows.Forms.Button initBtn;
+        private System.Windows.Forms.Button resetBtn;
 
     }
 }

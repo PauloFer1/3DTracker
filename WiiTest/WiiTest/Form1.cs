@@ -32,8 +32,12 @@ namespace WiiTest
         private int timePassed=0;
         private int inc = 0;
         private StreamWriter file;
+        private List<Coordinate> coords;
 
         private List<string> ids;
+
+        private const int LATENCY = 20;
+
 
         public Form1()
         {
@@ -42,21 +46,18 @@ namespace WiiTest
            
 
             this.ids = new List<string>();
-            
+            this.coords = new List<Coordinate>();
+
             //**********************************************
             int timeComp = timePassed;
             StringBuilder sb = new StringBuilder();
-            string mydocpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            //StreamWriter outfile = new StreamWriter(mydocpath + @"\ir_coords.txt", true);
-            file = new StreamWriter(mydocpath + @"\ir_coords.txt", true);
+            
             b = new Bitmap(screenWidth, screenHeight, PixelFormat.Format24bppRgb);
             b2 = new Bitmap(screenWidth, screenHeight, PixelFormat.Format24bppRgb);
             g = Graphics.FromImage(b);
             g2 = Graphics.FromImage(b2); 
             //**********************************************
-            aTimer = new System.Timers.Timer(10);
-            aTimer.Elapsed += OnTimedEvent;
-            aTimer.Enabled = true;
+           
 
             wc = new WiimoteCollection();
             try
@@ -93,12 +94,13 @@ namespace WiiTest
         private void writeToFile(StreamWriter file, StringBuilder sb) 
         {
             {
-                file.WriteAsync(sb.ToString());
+                //file.WriteAsync(sb.ToString());
+                file.Write(sb.ToString());
             }
         }
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            timePassed +=10;
+            timePassed +=LATENCY;
             //»»»»»»»»»»»»»»»»»»»»»»»»»»»»
             StringBuilder sb = new StringBuilder();
             g.Clear(Color.Black);
@@ -106,21 +108,19 @@ namespace WiiTest
 
             if (wc[0].WiimoteState.IRState.IRSensors[0].Found && (wc[1].WiimoteState.IRState.IRSensors[0].Found))
             {
-                int posX = (int)(screenWidth - (wc[0].WiimoteState.IRState.IRSensors[0].Position.X * screenWidth));
-                int posY = (int)(screenWidth - (wc[0].WiimoteState.IRState.IRSensors[0].Position.Y * screenHeight));
-                int posZ = (int)(screenHeight - (wc[1].WiimoteState.IRState.IRSensors[0].Position.X * screenHeight));
+                decimal posX = (decimal)(screenWidth - (wc[0].WiimoteState.IRState.IRSensors[0].Position.X * screenWidth));
+                decimal posY = (decimal)(screenHeight - (wc[0].WiimoteState.IRState.IRSensors[0].Position.Y * screenHeight));
+                decimal posZ = (decimal)(screenHeight - (wc[1].WiimoteState.IRState.IRSensors[0].Position.X * screenHeight));
 
-                sb.AppendLine("(" + posX + "," + posY + "," + posZ + ")=>" + timePassed);
-                sb.AppendLine();
                 Coordinate c = new Coordinate(inc, posX, posY, posZ);
+                this.coords.Add(c);
                 inc++;
-                writeToFile(file, c.toString());
-                Console.WriteLine("FOUND");
-                g2.DrawEllipse(new Pen(Color.Red), 100 / 2, posZ, 2, 2);
-                g.DrawEllipse(new Pen(Color.Red), posX, posY, 2, 2);
-                this.SetTextX((screenWidth - wc[0].WiimoteState.IRState.IRSensors[0].Position.X * screenWidth).ToString());
-                this.SetTextY((screenWidth - wc[0].WiimoteState.IRState.IRSensors[0].Position.Y * screenWidth).ToString());
-                this.SetTextZ((screenHeight - (wc[1].WiimoteState.IRState.IRSensors[0].Position.X * screenHeight)).ToString()); ;
+               // writeToFile(file, c.toString());
+                g2.DrawEllipse(new Pen(Color.Red), 100 / 2, (int)posZ, 2, 2);
+                g.DrawEllipse(new Pen(Color.Red), (int)posX, (int)posY, 2, 2);
+                this.SetTextX(posX.ToString());
+                this.SetTextY(posY.ToString());
+                this.SetTextZ(posZ.ToString()); ;
 
                 pbIR.Image = b;
                 pbIR2.Image = b2;
@@ -213,12 +213,55 @@ namespace WiiTest
                     e.Cancel = true;
                     break;
                 default:
+                    aTimer.Elapsed -= OnTimedEvent;
                  //   t.Abort();
                     break;
             }
         }
 
         private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void saveBtn_Click(object sender, EventArgs e)
+        {
+            string mydocpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            file = new StreamWriter(mydocpath + @"\" + DateTime.Now.ToString("MM-dd-yyyy_h-mm_tt") + ".txt", true);
+            StringBuilder s = new StringBuilder();
+            s.Append("/JOB").AppendLine().Append("//NAME Teste_robot").AppendLine().Append("//POS").AppendLine().Append("///NPOS 22,0,0,0,0,0");
+            s.AppendLine().Append("///USER 1").AppendLine().Append("///TOOL 1").AppendLine().Append("///POSTYPE USER").AppendLine();
+            s.Append("///RECTAN").AppendLine().Append("///RCONF 0,0,0,0,0,0").AppendLine();
+            for(int i =0; i<this.coords.Count; i++)
+            {
+                s.Append(this.coords[i].toString());
+            }
+            s.Append("//INST").AppendLine().Append("///DATE").Append(DateTime.Now.ToString("yyyy/MM/dd h:mm")).AppendLine();
+            s.Append("///COMM GENERATED BY DELCAM").AppendLine().Append("///ATTR SC,RW,RJ").AppendLine().Append("////FRAME USER 1").AppendLine();
+            s.Append("///GROUP1 RB1, BS1").AppendLine().Append("LVARS 2.0.0.0.0.0.0.0").AppendLine();
+            s.Append("NOP").AppendLine().Append("' Program Start");
+            this.writeToFile(file, s);
+
+            file.Close();
+        }
+
+        private void initBtn_Click(object sender, EventArgs e)
+        {
+            pbIR.Image = b;
+            pbIR2.Image = b2;
+            aTimer = new System.Timers.Timer(LATENCY);
+            aTimer.Elapsed += OnTimedEvent;
+            aTimer.Enabled = true;
+        }
+
+        private void resetBtn_Click(object sender, EventArgs e)
+        {
+            this.inc = 0;
+            this.coords.Clear();
+            this.coords = new List<Coordinate>();
+        }
+
+        private void elementHost1_ChildChanged(object sender, System.Windows.Forms.Integration.ChildChangedEventArgs e)
         {
 
         }
