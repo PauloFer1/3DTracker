@@ -1,0 +1,10 @@
+c:\users\displax\documents\visual studio 2013\Projects\WiiTest\WiiTest\bin\Debug\WiiTest.exe.config
+C:\Users\Displax\Documents\Visual Studio 2013\Projects\WiiTest\WiiTest\bin\Debug\WiiTest.exe
+C:\Users\Displax\Documents\Visual Studio 2013\Projects\WiiTest\WiiTest\bin\Debug\WiiTest.pdb
+C:\Users\Displax\Documents\Visual Studio 2013\Projects\WiiTest\WiiTest\bin\Debug\WiimoteLib.dll
+C:\Users\Displax\Documents\Visual Studio 2013\Projects\WiiTest\WiiTest\obj\Debug\WiiTest.csprojResolveAssemblyReference.cache
+C:\Users\Displax\Documents\Visual Studio 2013\Projects\WiiTest\WiiTest\obj\Debug\WiiTest.Form1.resources
+C:\Users\Displax\Documents\Visual Studio 2013\Projects\WiiTest\WiiTest\obj\Debug\WiiTest.Properties.Resources.resources
+C:\Users\Displax\Documents\Visual Studio 2013\Projects\WiiTest\WiiTest\obj\Debug\WiiTest.csproj.GenerateResource.Cache
+C:\Users\Displax\Documents\Visual Studio 2013\Projects\WiiTest\WiiTest\obj\Debug\WiiTest.exe
+C:\Users\Displax\Documents\Visual Studio 2013\Projects\WiiTest\WiiTest\obj\Debug\WiiTest.pdb
