@@ -33,11 +33,15 @@ namespace WiiTest
         private int inc = 0;
         private StreamWriter file;
         private List<Coordinate> coords;
+        CalibrationForm calib;
 
         private List<string> ids;
 
-        private const int LATENCY = 10;
+        private const int LATENCY = 2;
         private int cameraOrder = 1;
+        private int nrIrUsed = 1;
+        private int isNew = 1;
+        private int isCal = 0;
 
 
         public Form1()
@@ -116,21 +120,55 @@ namespace WiiTest
                     cam1 = 1;
                     cam2 = 0;
                 }
-                decimal posX = (decimal)((screenWidth - (wc[cam1].WiimoteState.IRState.IRSensors[0].Position.X * screenWidth)) - screenWidth/2 );
-                decimal posY = (decimal)(screenHeight - ((wc[cam1].WiimoteState.IRState.IRSensors[0].Position.Y * screenHeight)) - screenHeight/2 );
+               // decimal posX = (decimal)((screenWidth - (wc[cam1].WiimoteState.IRState.IRSensors[0].Position.X * screenWidth)) - screenWidth/2 );
+                decimal posX = (decimal)((screenWidth - (wc[cam1].WiimoteState.IRState.IRSensors[0].Position.X * screenWidth)));
+                decimal posY = (decimal)((((wc[cam1].WiimoteState.IRState.IRSensors[0].Position.Y * screenHeight))));
                 decimal posZ = (decimal)(-((screenHeight - (wc[cam2].WiimoteState.IRState.IRSensors[0].Position.X * screenHeight)) - screenHeight/2 ));
-
-                Coordinate c = new Coordinate(inc, posX, posY, posZ, this.timePassed);
+                Console.WriteLine(wc[cam1].WiimoteState.IRState.IRSensors[0].Position.Y);
+                Coordinate c = new Coordinate(inc, posX, posY, posZ, this.timePassed, isNew);
                 this.coords.Add(c);
                 inc++;
                 g2.DrawEllipse(new Pen(Color.Red), 100 / 2, (int)((-posZ+screenHeight/2)), 2, 2);
-                g.DrawEllipse(new Pen(Color.Red), (int)(posX+screenWidth/2), (int)(posY + screenHeight/2), 2, 2);
+                g.DrawEllipse(new Pen(Color.Red), (int)(posX), (int)(screenHeight - posY), 2, 2);
                 this.SetTextX(posX.ToString());
                 this.SetTextY(posY.ToString());
-                this.SetTextZ(posZ.ToString()); ;
+                this.SetTextZ(posZ.ToString()); 
+
+                if(this.isCal==1)
+                {
+                    this.calib.setPoint(posX, posZ);
+                }
+
+                if(this.nrIrUsed==2)
+                {
+                    if((wc[0].WiimoteState.IRState.IRSensors[1].Found && (wc[1].WiimoteState.IRState.IRSensors[1].Found)))
+                    {
+                         decimal posX2 = (decimal)((screenWidth - (wc[cam1].WiimoteState.IRState.IRSensors[1].Position.X * screenWidth)) - screenWidth/2 );
+                         decimal posY2 = (decimal)((((wc[cam1].WiimoteState.IRState.IRSensors[0].Position.Y * screenHeight))));
+                         decimal posZ2 = (decimal)(-((screenHeight - (wc[cam2].WiimoteState.IRState.IRSensors[1].Position.X * screenHeight)) - screenHeight/2 ));
+                         g2.DrawEllipse(new Pen(Color.Red), 100 / 2, (int)((-posZ2+screenHeight/2)), 2, 2);
+                         g.DrawEllipse(new Pen(Color.Red), (int)(posX2+screenWidth/2), (int)(screenHeight - posY2), 2, 2);
+                    }
+                }
 
                 pbIR.Image = b;
                 pbIR2.Image = b2;
+                isNew = 0;
+            }
+            else
+            {
+                if (isNew == 0)
+                {
+                    Coordinate coord = coords[coords.Count - 1];
+                    decimal xx = coord.getX();
+                    decimal yy = coord.getY();
+                    decimal zz = coord.getZ();
+                    decimal time = coord.getTime();
+
+                    Coordinate c = new Coordinate(inc, xx, yy, zz, time, 2);
+                    this.coords.Add(c);
+                }
+                isNew = 1;
             }
             if (wc[0].WiimoteState.IRState.IRSensors[0].Found)
                 SetStatus1("FOUND");
@@ -211,6 +249,18 @@ namespace WiiTest
             else
             {
                 this.status2.Text = text;
+            }
+        }
+        private void SetIRUsed(string text)
+        {
+            if (this.nrIr.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(SetIRUsed);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                this.nrIr.Text = text;
             }
         }
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -297,6 +347,51 @@ namespace WiiTest
                 this.cameraOrder = 2;
             else
                 this.cameraOrder = 1;
+        }
+
+        private void label4_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (this.nrIrUsed == 1)
+                this.nrIrUsed = 2;
+            else
+                this.nrIrUsed = 1;
+
+            this.SetIRUsed(this.nrIrUsed.ToString());
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            StringBuilder s = new StringBuilder();
+            s.Append("JR Points_CSV");
+            s.AppendLine();
+            for (int i = 0; i < this.coords.Count; i++)
+            {
+                s.Append(this.coords[i].toJCRString());
+            }
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "jcs files (*.jcs)|*.jcs";
+            saveFileDialog1.FilterIndex = 2;
+            saveFileDialog1.RestoreDirectory = true;
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                FileStream fs = new FileStream(saveFileDialog1.FileName, FileMode.Create);
+                StreamWriter writer = new StreamWriter(fs);
+                writer.Write(s.ToString());
+                writer.Close();
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            this.calib = new CalibrationForm();
+            this.calib.Show();
+            this.isCal = 1;
         }
 
 

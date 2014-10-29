@@ -17,3 +17,8 @@ C:\Users\Displax\Documents\PROJECTS\CODE\3DTracker\3DTracker\WiiTest\WiiTest\obj
 C:\Users\Displax\Documents\PROJECTS\CODE\3DTracker\3DTracker\WiiTest\WiiTest\obj\Debug\WiiTest.Form1.resources
 C:\Users\Displax\Documents\PROJECTS\CODE\3DTracker\3DTracker\WiiTest\WiiTest\obj\Debug\WiiTest.Properties.Resources.resources
 C:\Users\Displax\Documents\PROJECTS\CODE\3DTracker\3DTracker\WiiTest\WiiTest\obj\Debug\WiiTest.csproj.GenerateResource.Cache
+C:\Users\Displax\Documents\PROJECTS\CODE\3DTracker\3DTracker\WiiTest\WiiTest\bin\Debug\WiiTest.exe.manifest
+C:\Users\Displax\Documents\PROJECTS\CODE\3DTracker\3DTracker\WiiTest\WiiTest\bin\Debug\WiiTest.application
+C:\Users\Displax\Documents\PROJECTS\CODE\3DTracker\3DTracker\WiiTest\WiiTest\obj\Debug\WiiTest.exe.manifest
+C:\Users\Displax\Documents\PROJECTS\CODE\3DTracker\3DTracker\WiiTest\WiiTest\obj\Debug\WiiTest.application
+C:\Users\Displax\Documents\PROJECTS\CODE\3DTracker\3DTracker\WiiTest\WiiTest\obj\Debug\WiiTest.CalibrationForm.resources
